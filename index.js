@@ -37,10 +37,10 @@ async function run() {
     const levelTitleCollection = client
       .db("easyCodeDB")
       .collection("levelTitle");
-      const categoryTitleCollection = client
+    const categoryTitleCollection = client
       .db("easyCodeDB")
       .collection("categoryTitle");
-
+    const resourcesCollection = client.db("easyCodeDB").collection("resources");
 
     // level add ---------->
     // level post
@@ -69,8 +69,8 @@ async function run() {
     });
 
     // Category
-     // Category post
-     app.post("/categoryTitle", async (req, res) => {
+    // Category post
+    app.post("/categoryTitle", async (req, res) => {
       try {
         const newLevel = req.body;
         console.log(newLevel);
@@ -93,7 +93,6 @@ async function run() {
         console.log(err);
       }
     });
-    
 
     //level -------->
     //post level code
@@ -120,9 +119,7 @@ async function run() {
         console.log(err);
       }
     });
-    
-    
-    
+
     // level code update
     app.put("/level/:id", async (req, res) => {
       try {
@@ -161,8 +158,45 @@ async function run() {
       }
     });
 
+    //Resources
 
+    //Resources post
+    app.post("/resources", async (req, res) => {
+      try {
+        const newResources = req.body;
+        console.log(newResources);
 
+        const result = await resourcesCollection.insertOne(newResources);
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    // get all Resources
+    app.get("/resources", async (req, res) => {
+      try {
+        const cursor = resourcesCollection.find();
+        const result = await cursor.toArray();
+
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+    // resources delete
+    app.delete("/resources/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        console.log("delete id : id");
+        const query = { _id: new ObjectId(id) };
+
+        const result = await resourcesCollection.deleteOne(query);
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
